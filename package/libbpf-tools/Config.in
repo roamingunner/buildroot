@@ -1,0 +1,7 @@
+config BR2_PACKAGE_LIBBPF_TOOLS
+	bool "libbpf-tools"
+	depends on BR2_PACKAGE_LIBBPF
+	depends on BR2_PACKAGE_ELFUTILS
+	depends on BR2_PACKAGE_ZLIB
+	help
+	  libbpf-tools in bcc project
