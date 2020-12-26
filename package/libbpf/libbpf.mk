@@ -17,7 +17,7 @@ LIBBPF_ENV = \
 		PKG_CONFIG_LIBDIR="$(TARGET_DIR)/usr/lib/pkgconfig" \
 		LIBDIR="$(TARGET_DIR)/usr/lib" \
 		INCLUDEDIR="$(TARGET_DIR)/usr/include" \
-		UAPIDIR="$(TARGET_DIR)/usr/uapi"
+		UAPIDIR="$(TARGET_DIR)/usr/include/uapi"
 
 define LIBBPF_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(LIBBPF_ENV) $(MAKE) -C $(@D)/src CC=$(TARGET_CC) BUILD_STATIC_ONLY=1 CFLAGS=$(LIBBPF_CFLAGS) 
