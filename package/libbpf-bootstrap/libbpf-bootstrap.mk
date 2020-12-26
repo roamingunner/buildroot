@@ -28,6 +28,7 @@ endef
 define LIBBPF_BOOTSTRAP_INSTALL_TARGET_CMDS
 	cp $(@D)/src/minimal $(TARGET_DIR)/usr/sbin/
 	cp $(@D)/src/bootstrap  $(TARGET_DIR)/usr/sbin/
+	cp $(@D)/src/uprobe  $(TARGET_DIR)/usr/sbin/
 endef
 
 
