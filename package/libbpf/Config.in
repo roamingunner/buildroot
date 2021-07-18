@@ -1,7 +1,7 @@
 config BR2_PACKAGE_LIBBPF
 	bool "libbpf"
-	depends on BR2_PACKAGE_ELFUTILS
-	depends on BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_ELFUTILS
+	select BR2_PACKAGE_ZLIB
 	help
 	  libbpf
 
@@ -16,7 +16,7 @@ config BR2_PACKAGE_LIBBPF_STANDALONE_VESION
 config BR2_PACKAGE_LIBBPF_LINUX_KERNEL_VERSION
 	bool "build libbpf in linux kernel builtin version"
 	depends on BR2_LINUX_KERNEL
-	depends on BR2_PACKAGE_BINUTILS
+	select BR2_PACKAGE_BINUTILS
 endchoice
 
 

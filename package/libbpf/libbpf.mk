@@ -43,33 +43,31 @@ LIBBPF_CFLAGS = "-g -O2 -Werror -Wall -I$(STAGING_DIR)/usr/include"
 LIBBPF_INSTALL_PREFIX = "$(STAGING_DIR)/usr"
 LIBBPF_INSTALL_STAGING = YES
 LIBBPF_INSTALL_TARGET = NO
+
 LIBBPF_TARGET_ENV = \
 		PKG_CONFIG="$(PKG_CONFIG_HOST_BINARY)" \
-		PKG_CONFIG_LIBDIR="$(STAGING_DIR)/usr/lib/pkgconfig" \
+		PKG_CONFIG_LIBDIR="$(STAGING_DIR)/usr/lib/pkgconfig"
+
+LIBBPF_TARGET_VARIABLES = \
 		ARCH=$(KERNEL_ARCH) \
 		CC=$(TARGET_CC) \
 		LD=$(TARGET_LD) \
 		CROSS_COMPILE=$(TARGET_CROSS) \
 		VMLINUX_BTF=$(LINUX_DIR)/vmlinux \
-		BPFTOOL=$(HOST_DIR)/sbin/bpftool
+		BPFTOOL=$(HOST_DIR)/sbin/bpftool \
+		BPFTOOL_BOOTSTRAP=$(HOST_DIR)/sbin/bpftool-bootstrap
 
 LIBBPF_HOST_ENV = \
 		PKG_CONFIG="$(PKG_CONFIG_HOST_BINARY)" \
-		PKG_CONFIG_LIBDIR="$(STAGING_DIR)/usr/lib/pkgconfig" \
-		ARCH=$(KERNEL_ARCH) \
+		PKG_CONFIG_LIBDIR="$(HOST_DIR)/lib/pkgconfig" \
 		DESTDIR=$(HOST_DIR) \
-		prefix=/usr \
+		prefix=/usr
 
 define LIBBPF_BUILD_CMDS
 	$(LINUX_MAKE_ENV) $(MAKE) $(LINUX_MAKE_FLAGS) INSTALL_HDR_PATH=$(STAGING_DIR) -C $(LINUX_DIR) headers_install
-	echo "build for host..........................."
-	$(LIBBPF_HOST_ENV) $(MAKE) -C $(LINUX_DIR)/tools/bpf clean
-	$(LIBBPF_HOST_ENV) $(MAKE) -C $(LINUX_DIR)/tools/bpf bpftool 
-	$(LIBBPF_HOST_ENV) $(MAKE) -C $(LINUX_DIR)/tools/bpf bpftool_install
-
-	echo "build for target........................."
-	$(TARGET_MAKE_ENV) $(LIBBPF_TARGET_ENV) $(MAKE) -C $(LINUX_DIR)/tools/bpf clean
-	$(TARGET_MAKE_ENV) $(LIBBPF_TARGET_ENV) $(MAKE) -C $(LINUX_DIR)/tools/bpf 
+	$(HOST_MAKE_ENV) $(MAKE) -C $(LINUX_DIR)/tools/bpf clean
+	$(HOST_MAKE_ENV) $(MAKE) VMLINUX_BTF=$(LINUX_DIR)/vmlinux -C $(LINUX_DIR)/tools/bpf 
+	$(HOST_MAKE_ENV) $(MAKE) VMLINUX_BTF=$(LINUX_DIR)/vmlinux -C $(LINUX_DIR)/tools/bpf install
 endef
 
 
@@ -81,5 +79,17 @@ endif
 # LIBDIR="$(STAGING_DIR)/usr/lib" \
 # INCLUDEDIR="$(STAGING_DIR)/usr/include" \
 # UAPIDIR="$(STAGING_DIR)/usr/include/uapi"
+#
+	# $(LINUX_MAKE_ENV) $(MAKE) $(LINUX_MAKE_FLAGS) INSTALL_HDR_PATH=$(STAGING_DIR) -C $(LINUX_DIR) headers_install
+	# echo "build for host..........................."
+	# $(LIBBPF_HOST_ENV) $(MAKE) -C $(LINUX_DIR)/tools/bpf clean
+	# $(LIBBPF_HOST_ENV) $(MAKE) -C $(LINUX_DIR)/tools/bpf bpftool 
+	# $(LIBBPF_HOST_ENV) $(MAKE) -C $(LINUX_DIR)/tools/bpf bpftool_install
+	# $(LIBBPF_HOST_ENV) $(MAKE) -C $(LINUX_DIR)/tools/bpf/bpftool bpftool-bootstrap
+	# $(INSTALL) $(LINUX_DIR)/tools/bpf/bpftool/bpftool-bootstrap $(HOST_DIR)/sbin/bpftool-bootstrap
+	
+	# echo "build for target..........................."
+	# $(TARGET_MAKE_ENV) $(LIBBPF_TARGET_ENV) $(MAKE) $(LIBBPF_TARGET_VARIABLES) -C $(LINUX_DIR)/tools/bpf clean
+	# $(TARGET_MAKE_ENV) $(LIBBPF_TARGET_ENV) $(MAKE) $(LIBBPF_TARGET_VARIABLES) -C $(LINUX_DIR)/tools/bpf 
 
 $(eval $(generic-package))
