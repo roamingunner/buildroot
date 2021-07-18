@@ -4,3 +4,19 @@ config BR2_PACKAGE_LIBBPF
 	depends on BR2_PACKAGE_ZLIB
 	help
 	  libbpf
+
+choice
+	prompt "choice libbpf version"
+	help
+	  choice libbpf version
+
+config BR2_PACKAGE_LIBBPF_STANDALONE_VESION
+	bool "build libbpf standalone version"
+
+config BR2_PACKAGE_LIBBPF_LINUX_KERNEL_VERSION
+	bool "build libbpf in linux kernel builtin version"
+	depends on BR2_LINUX_KERNEL
+	depends on BR2_PACKAGE_BINUTILS
+endchoice
+
+
